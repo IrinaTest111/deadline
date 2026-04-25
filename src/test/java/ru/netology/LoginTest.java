@@ -16,8 +16,7 @@ public class LoginTest {
 
     @BeforeEach
     void setUp() {
-
-        loginPage = open("http://localhost:9999", LoginPage.class);
+        loginPage = new LoginPage();
     }
 
     @AfterAll
@@ -37,9 +36,7 @@ public class LoginTest {
         DataHelper.AuthInfo authInfo = DataHelper.getAuthInfoWithTestData();
         VerificationPage verificationPage = loginPage.validLogin(authInfo);
 
-        Thread.sleep(3000);
-
-        String verificationCode = SQLHelper.getVerificationCode();  // Теперь возвращает String
+        String verificationCode = SQLHelper.getVerificationCode();
         verificationPage.validVerify(verificationCode);
     }
 
@@ -57,8 +54,6 @@ public class LoginTest {
 
         DataHelper.AuthInfo authInfo = DataHelper.getAuthInfoWithTestData();
         VerificationPage verificationPage = loginPage.validLogin(authInfo);
-
-        Thread.sleep(3000);
 
         String randomCode = DataHelper.generateRandomVerificationCode();
         verificationPage.verify(randomCode);
@@ -80,22 +75,23 @@ public class LoginTest {
         verificationPage.verifyErrorNotification("Ошибка! Неверно указан код! Попробуйте ещё раз.");
     }
 
+
     @Test
     @DisplayName("Should block user after three invalid login attempts")
     void shouldBlockUserAfterThreeInvalidLoginAttempts() {
-
         DataHelper.AuthInfo invalidAuthInfo = DataHelper.generateRandomUser();
 
         for (int i = 0; i < 3; i++) {
-            loginPage.login(invalidAuthInfo);
 
+            loginPage = new LoginPage();
+            loginPage.login(invalidAuthInfo);
             loginPage.verifyErrorNotification("Ошибка! Неверно указан логин или пароль");
         }
 
+
+        loginPage = new LoginPage();
         loginPage.login(invalidAuthInfo);
-
         loginPage.verifyErrorNotification("Пользователь заблокирован");
-
     }
 
 }

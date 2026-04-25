@@ -1,12 +1,12 @@
 package ru.netology.page;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import ru.netology.data.DataHelper;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
 
 public class LoginPage {
     private final SelenideElement loginField = $("input[name='login']");
@@ -14,8 +14,8 @@ public class LoginPage {
     private final SelenideElement loginButton = $("button");
     private final SelenideElement errorNotification = $(".notification__content");
 
-    public void open() {
-        com.codeborne.selenide.Selenide.open("http://localhost:9999");
+    public LoginPage() {
+        open("http://localhost:9999");
     }
 
     public void verifyErrorNotification(String expectedText) {
@@ -28,13 +28,12 @@ public class LoginPage {
     }
 
     public void login(DataHelper.AuthInfo info) {
+
+        loginField.setValue("");
+        passwordField.setValue("");
+
         loginField.setValue(info.getLogin());
         passwordField.setValue(info.getPassword());
         loginButton.click();
-    }
-
-    public String getErrorText() {
-        errorNotification.shouldBe(Condition.visible);
-        return errorNotification.getText();
     }
 }
